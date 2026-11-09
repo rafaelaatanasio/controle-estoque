@@ -1,0 +1,29 @@
+### Entrada de 10 unidades
+POST http://localhost:8080/produtos/SKU-1/entradas
+Content-Type: application/json
+
+{"quantidade": 10}
+
+### Reservar 4 para o PEDIDO-1
+POST http://localhost:8080/produtos/SKU-1/reservas
+Content-Type: application/json
+
+{"solicitacaoId": "PEDIDO-1", "quantidade": 4}
+
+### Bloquear 2 por avaria
+POST http://localhost:8080/produtos/SKU-1/bloqueios
+Content-Type: application/json
+
+{"motivo": "AVARIA", "quantidade": 2}
+
+### Consultar produto
+GET http://localhost:8080/produtos/SKU-1
+
+### Saída maior que o disponível (espera 422)
+POST http://localhost:8080/produtos/SKU-1/saidas
+Content-Type: application/json
+
+{"quantidade": 50}
+
+### Liberar reserva (troque pelo id retornado na reserva)
+POST http://localhost:8080/reservas/COLE-O-ID-AQUI/liberacao
