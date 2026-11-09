@@ -25,5 +25,11 @@ Content-Type: application/json
 
 {"quantidade": 50}
 
+### Quantidade inválida (espera 400)
+POST http://localhost:8080/produtos/SKU-1/entradas
+Content-Type: application/json
+
+{"quantidade": 0}
+
 ### Liberar reserva (troque pelo id retornado na reserva)
 POST http://localhost:8080/reservas/COLE-O-ID-AQUI/liberacao

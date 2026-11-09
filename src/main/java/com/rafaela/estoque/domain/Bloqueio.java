@@ -39,12 +39,6 @@ public class Bloqueio {
         this.criadoEm = Instant.now();
     }
 
-    // 4. Método liberar()
-    //
-    //Se já está LIBERADA → lança AlocacaoJaLiberadaException (impede liberar duas vezes).
-    //Senão → muda para LIBERADA e registra o momento.
-    // Para comparar enums usa-se ==, porque cada valor (ATIVA, LIBERADA) existe uma única vez na memória.
-
     public void liberar() {
         if (status == StatusAlocacao.LIBERADA) {
             throw new AlocacaoJaLiberadaException("Bloqueio", id);
