@@ -29,7 +29,7 @@ public class EstoqueService {
 
     @Transactional
     public Produto registrarEntrada(String produtoId, int quantidade) {
-        Produto produto = produtoRepository.findById(produtoId)
+        Produto produto = produtoRepository.buscarParaAtualizacao(produtoId)
                 .orElseGet(() -> new Produto(produtoId));
         produto.registrarEntrada(quantidade);
         return produtoRepository.save(produto);
@@ -37,21 +37,21 @@ public class EstoqueService {
 
     @Transactional
     public Produto registrarSaida(String produtoId, int quantidade) {
-        Produto produto = buscarProduto(produtoId);
+        Produto produto = buscarParaAtualizacao(produtoId);
         produto.registrarSaida(quantidade);
         return produto;
     }
 
     @Transactional
     public Reserva reservar(String produtoId, String solicitacaoId, int quantidade) {
-        Produto produto = buscarProduto(produtoId);
+        Produto produto = buscarParaAtualizacao(produtoId);
         produto.reservar(quantidade);
         return reservaRepository.save(new Reserva(produtoId, solicitacaoId, quantidade));
     }
 
     @Transactional
     public Bloqueio bloquear(String produtoId, String motivo, int quantidade) {
-        Produto produto = buscarProduto(produtoId);
+        Produto produto = buscarParaAtualizacao(produtoId);
         produto.bloquear(quantidade);
         return bloqueioRepository.save(new Bloqueio(produtoId, motivo, quantidade));
     }
@@ -60,7 +60,7 @@ public class EstoqueService {
     public Reserva liberarReserva(UUID reservaId) {
         Reserva reserva = consultarReserva(reservaId);
         reserva.liberar();
-        buscarProduto(reserva.getProdutoId()).liberarReserva(reserva.getQuantidade());
+        buscarParaAtualizacao(reserva.getProdutoId()).liberarReserva(reserva.getQuantidade());
         return reserva;
     }
 
@@ -68,7 +68,7 @@ public class EstoqueService {
     public Bloqueio liberarBloqueio(UUID bloqueioId) {
         Bloqueio bloqueio = consultarBloqueio(bloqueioId);
         bloqueio.liberar();
-        buscarProduto(bloqueio.getProdutoId()).liberarBloqueio(bloqueio.getQuantidade());
+        buscarParaAtualizacao(bloqueio.getProdutoId()).liberarBloqueio(bloqueio.getQuantidade());
         return bloqueio;
     }
 
@@ -91,6 +91,11 @@ public class EstoqueService {
 
     private Produto buscarProduto(String produtoId) {
         return produtoRepository.findById(produtoId)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Produto", produtoId));
+    }
+
+    private Produto buscarParaAtualizacao(String produtoId) {
+        return produtoRepository.buscarParaAtualizacao(produtoId)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Produto", produtoId));
     }
 }

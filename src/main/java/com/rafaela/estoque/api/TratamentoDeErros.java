@@ -9,6 +9,7 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 
 @RestControllerAdvice
 public class TratamentoDeErros extends ResponseEntityExceptionHandler {
@@ -31,6 +32,14 @@ public class TratamentoDeErros extends ResponseEntityExceptionHandler {
     @ExceptionHandler(QuantidadeInvalidaException.class)
     public ProblemDetail quantidadeInvalida(QuantidadeInvalidaException ex) {
         return problema(HttpStatus.BAD_REQUEST, "Quantidade inválida", ex);
+    }
+
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ProblemDetail conflitoDeConcorrencia(ObjectOptimisticLockingFailureException ex) {
+        ProblemDetail problema = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT,
+                "O produto foi alterado por outra operação ao mesmo tempo. Tente novamente.");
+        problema.setTitle("Conflito de concorrência");
+        return problema;
     }
 
     private ProblemDetail problema(HttpStatus status, String titulo, RuntimeException ex) {
